@@ -1,9 +1,11 @@
 use std::{
     fmt::Debug,
-    fs::{File, OpenOptions, self},
+    fs::{self, File, OpenOptions},
     io::{Read, Write},
     mem::size_of,
-    net::TcpStream, thread, time::Duration,
+    net::TcpStream,
+    thread,
+    time::Duration,
 };
 
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -17,10 +19,11 @@ pub struct FileDescriptor {
 #[derive(Debug, Serialize, Deserialize)]
 pub enum ActionDescrtiptor {
     Upload,
-    Download(String)
+    Download(String),
+    Index,
 }
 
-pub struct FilePart {}
+pub type FileIndex = Vec<FileDescriptor>;
 
 const PARTSIZE: usize = 512; //
 
@@ -59,7 +62,7 @@ pub fn download_file(stream: &mut TcpStream, mut path: String) -> String {
     //remove old file if it exists
     let _ = fs::remove_file(filepath.clone());
 
-    while let Ok(_) = fs::metadata(filepath.clone()){
+    while let Ok(_) = fs::metadata(filepath.clone()) {
         thread::sleep(Duration::from_millis(10));
         println!("Waiting to delete old");
     }
@@ -103,4 +106,32 @@ pub fn get_message<T: DeserializeOwned + Serialize + Debug>(stream: &mut TcpStre
     let message: T = bincode::deserialize(&msg_bin).unwrap();
 
     message
+}
+
+pub fn send_index(stream: &mut TcpStream) {
+    let paths = fs::read_dir("./files").unwrap();
+
+    let mut fileindex: FileIndex = vec![];
+
+    for path in paths {
+        let path = path.unwrap();
+        let md = path.metadata().unwrap();
+        let filename = path
+            .file_name()
+            .into_string()
+            .unwrap()
+            .split("/")
+            .last()
+            .unwrap()
+            .to_string();
+
+        let filelen;
+        if md.is_file() {
+            filelen = md.len();
+        } else {
+            filelen = 0;
+        }
+        fileindex.push(FileDescriptor { filename, filelen })
+    }
+    send_message(stream, fileindex);
 }

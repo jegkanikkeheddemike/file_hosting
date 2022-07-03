@@ -1,6 +1,6 @@
 use std::{net::TcpStream, env};
 
-use fshare::{send_file, send_message, ActionDescrtiptor, download_file};
+use fshare::{send_file, send_message, ActionDescrtiptor, download_file, FileIndex, get_message};
 
 fn main() {
     let addr = "192.168.0.94:10000";
@@ -34,6 +34,13 @@ fn main() {
                         },
                     }
                 },
+                "index" => {
+                    send_message(&mut stream, ActionDescrtiptor::Index);
+                    let fileindex:FileIndex = get_message(&mut stream);
+                    for file in fileindex {
+                        println!("{}    {}",file.filename,file.filelen);
+                    }
+                }
                 _ => {
                     println!("Failed to parse protocol, Use \"upload\" or \"download\"");
                 }

@@ -3,7 +3,7 @@ use std::{
     thread, fs::create_dir,
 };
 
-use fshare::{download_file, get_message, ActionDescrtiptor, send_file};
+use fshare::{download_file, get_message, ActionDescrtiptor, send_file, send_index};
 
 fn main() {
     let addr = "0.0.0.0:10000";
@@ -31,5 +31,9 @@ fn accept(mut stream: TcpStream) {
             send_file(&filepath, &mut stream);
             println!("uploaded {filename}");
         },
+        ActionDescrtiptor::Index => {
+            send_index(&mut stream);
+            println!("Send index");
+        }
     }
 }
