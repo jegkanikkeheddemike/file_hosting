@@ -21,11 +21,13 @@ fn accept(mut stream: TcpStream) {
     let action:ActionDescrtiptor = get_message(&mut stream);
     match action {
         ActionDescrtiptor::Upload => {
-            download_file(&mut stream);
+            let filename = download_file(&mut stream);
+            println!("downloaded {filename}");
         },
         ActionDescrtiptor::Download(filename) => {
             let filepath = format!("./{filename}");
-            send_file(&filepath, &mut stream)
+            send_file(&filepath, &mut stream);
+            println!("uploaded {filename}");
         },
     }
 }

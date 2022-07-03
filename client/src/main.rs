@@ -3,7 +3,7 @@ use std::{net::TcpStream, env};
 use fshare::{send_file, send_message, ActionDescrtiptor, download_file};
 
 fn main() {
-    let addr = "0.0.0.0:10000";
+    let addr = "192.168.0.94:10000";
     let mut stream = TcpStream::connect(addr).unwrap();
 
 

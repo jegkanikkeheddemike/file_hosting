@@ -47,7 +47,7 @@ pub fn send_file(filepath: &str, stream: &mut TcpStream) {
     }
 }
 
-pub fn download_file(stream: &mut TcpStream) {
+pub fn download_file(stream: &mut TcpStream) -> String {
     let filedescriptor: FileDescriptor = get_message(stream);
 
     let filepath = format!("./{}", filedescriptor.filename);
@@ -73,6 +73,7 @@ pub fn download_file(stream: &mut TcpStream) {
             break;
         }
     }
+    filedescriptor.filename
 }
 
 pub fn send_message<T: Serialize + DeserializeOwned + Debug>(stream: &mut TcpStream, message: T) {
