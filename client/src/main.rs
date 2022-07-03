@@ -27,7 +27,7 @@ fn main() {
                     match args.get(2) {
                         Some(filename) => {
                             send_message(&mut stream, ActionDescrtiptor::Download(filename.into()));
-                            download_file(&mut stream);
+                            download_file(&mut stream, "./".into());
                         },
                         None => {
                             println!("Failed to parse file name");

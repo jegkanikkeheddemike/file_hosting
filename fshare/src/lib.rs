@@ -47,10 +47,14 @@ pub fn send_file(filepath: &str, stream: &mut TcpStream) {
     }
 }
 
-pub fn download_file(stream: &mut TcpStream) -> String {
+pub fn download_file(stream: &mut TcpStream, mut path: String) -> String {
     let filedescriptor: FileDescriptor = get_message(stream);
 
-    let filepath = format!("./{}", filedescriptor.filename);
+    if !path.ends_with("/") {
+        path = format!("{path}/")
+    }
+
+    let filepath = format!("{path}{}", filedescriptor.filename);
 
     //remove old file if it exists
     let _ = fs::remove_file(filepath.clone());
