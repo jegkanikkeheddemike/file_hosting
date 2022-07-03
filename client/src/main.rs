@@ -43,11 +43,11 @@ fn main() {
                 }
             }
             _ => {
-                println!("Failed to parse protocol, Use \"upload\" or \"download\"");
+                println!("Failed to parse protocol, Use \"upload\", \"download\" or \"index\" to get avalable files");
             }
         },
         None => {
-            println!("Failed to parse protocol, Use \"upload\" or \"download\"");
+            println!("Failed to parse protocol, Use \"upload\", \"download\" or \"index\" to get avalable files");
         }
     }
 }
