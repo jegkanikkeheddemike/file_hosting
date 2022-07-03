@@ -27,7 +27,7 @@ fn accept(mut stream: TcpStream) {
             println!("downloaded {filename}");
         },
         ActionDescrtiptor::Download(filename) => {
-            let filepath = format!("./{filename}");
+            let filepath = format!("./files/{filename}");
             send_file(&filepath, &mut stream);
             println!("uploaded {filename}");
         },
