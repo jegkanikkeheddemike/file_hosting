@@ -20,10 +20,10 @@ fn main() {
 
 fn accept(mut stream: TcpStream) {
 
-    let action:ActionDescrtiptor = get_message(&mut stream);
+    let action:ActionDescrtiptor = get_message(&mut stream).unwrap();
     match action {
         ActionDescrtiptor::Upload => {
-            let filename = download_file(&mut stream, "./files/".to_string());
+            let filename = download_file(&mut stream, "./files/".to_string()).unwrap();
             println!("downloaded {filename}");
         },
         ActionDescrtiptor::Download(filename) => {

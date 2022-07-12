@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 fshare = {path="../fshare"}
+text_io = "0.1.10"

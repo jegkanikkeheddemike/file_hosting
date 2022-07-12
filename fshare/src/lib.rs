@@ -50,8 +50,8 @@ pub fn send_file(filepath: &str, stream: &mut TcpStream) {
     }
 }
 
-pub fn download_file(stream: &mut TcpStream, mut path: String) -> String {
-    let filedescriptor: FileDescriptor = get_message(stream);
+pub fn download_file(stream: &mut TcpStream, mut path: String) -> Result<String,String> {
+    let filedescriptor: FileDescriptor = get_message(stream)?;
 
     if !path.ends_with("/") {
         path = format!("{path}/")
@@ -74,13 +74,13 @@ pub fn download_file(stream: &mut TcpStream, mut path: String) -> String {
         .unwrap();
 
     loop {
-        let bin: Vec<u8> = get_message(stream);
+        let bin: Vec<u8> = get_message(stream)?;
         file.write(&bin).unwrap();
         if bin.len() != PARTSIZE {
             break;
         }
     }
-    filedescriptor.filename
+    Ok(filedescriptor.filename)
 }
 
 pub fn send_message<T: Serialize + DeserializeOwned + Debug>(stream: &mut TcpStream, message: T) {
@@ -93,7 +93,7 @@ pub fn send_message<T: Serialize + DeserializeOwned + Debug>(stream: &mut TcpStr
     stream.write_all(&msg_bin).unwrap();
 }
 
-pub fn get_message<T: DeserializeOwned + Serialize + Debug>(stream: &mut TcpStream) -> T {
+pub fn get_message<T: DeserializeOwned + Serialize + Debug>(stream: &mut TcpStream) -> Result<T,String> {
     let mut len_bin = vec![0u8; size_of::<u32>()];
 
     stream.read_exact(&mut len_bin).unwrap();
@@ -105,7 +105,7 @@ pub fn get_message<T: DeserializeOwned + Serialize + Debug>(stream: &mut TcpStre
 
     let message: T = bincode::deserialize(&msg_bin).unwrap();
 
-    message
+    Ok(message)
 }
 
 pub fn send_index(stream: &mut TcpStream) {
